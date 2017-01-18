@@ -8,7 +8,7 @@
  *
  */
 class ImageWatermarkExtension extends DataExtension {
-  
+
   public function addWatermark(Image $watermarkFile, $position = 3, $transparency = 100) {
     
     // original image
@@ -17,12 +17,12 @@ class ImageWatermarkExtension extends DataExtension {
     $image_height = $size[1];
     $image_type = $size[2];
     
-    // watermark should not cover more than 25% of original image
-    // TODO: make this dynamic
-    $watermark_width = ceil($image_width / 2);
-    $watermark_height = ceil($image_height / 2);
-    if ($watermarkFile->getWidth() > $watermark_width || $watermarkFile->getHeight() > $watermark_height) {
-      $watermarkFile = $watermarkFile->SetRatioSize($watermark_width, $watermark_height);
+    if(Config::inst()->get('WatermarkImage', 'constrain_watermark') === 1){
+        $watermark_width = ceil($image_width / 2);
+        $watermark_height = ceil($image_height / 2);
+        if ($watermarkFile->getWidth() > $watermark_width || $watermarkFile->getHeight() > $watermark_height) {
+            $watermarkFile = $watermarkFile->Fit($watermark_width, $watermark_height);
+        }
     }
     $watermark_path = $watermarkFile->getFullPath();
     list($watermark_width, $watermark_height, $watermark_type) = getimagesize($watermark_path);
