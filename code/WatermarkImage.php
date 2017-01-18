@@ -11,6 +11,8 @@ class WatermarkImage extends Image {
   
   static $backend = "WatermarkGD";
   protected $addWatermark = true;
+
+  private static $constrain_watermark = 1;
   
   public function WithoutWatermark() {
     $this->addWatermark = false;
@@ -75,7 +77,7 @@ class WatermarkImage extends Image {
 				$backend = $this->$generateFunc($backend, $arg1, $arg2);
 				if($backend){
 				  $watermark = $this->getWatermark();
-				  if ($this->addWatermark && $watermark && $watermark instanceof Image) {;
+				  if ($this->addWatermark && $watermark && $watermark instanceof Image) {
             $backend->setWatermark($watermark, $this->getWatermarkPosition(), $this->getWatermarkTransparency());
 				  }
 					$backend->writeTo(Director::baseFolder()."/" . $cacheFile);

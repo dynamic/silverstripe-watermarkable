@@ -22,14 +22,14 @@ class WatermarkGD extends GDBackend {
     $image_width = $size[0];
     $image_height = $size[1];
     $image_type = $size[2];
-    
-    // watermark should not cover more than 25% of original image
-    // TODO: make this dynamic
-    $watermark_width = ceil($image_width / 2);
-    $watermark_height = ceil($image_height / 2);
-    if ($this->watermark->getWidth() > $watermark_width || $this->watermark->getHeight() > $watermark_height) {
-      $this->watermark = $this->watermark->SetRatioSize($watermark_width, $watermark_height);
-    }
+
+      if(Config::inst()->get('WatermarkImage', 'constrain_watermark') === 1) {
+          $watermark_width = ceil($image_width / 2);
+          $watermark_height = ceil($image_height / 2);
+          if ($this->watermark->getWidth() > $watermark_width || $this->watermark->getHeight() > $watermark_height) {
+              $this->watermark = $this->watermark->Fit($watermark_width, $watermark_height);
+          }
+      }
     $watermark_path = $this->watermark->getFullPath();
     list($watermark_width, $watermark_height, $watermark_type) = getimagesize($watermark_path);
     
@@ -127,7 +127,6 @@ class WatermarkGD extends GDBackend {
         break;
     }
 
-
     $tmp = imagecreatetruecolor($watermark_width, $watermark_height);
     imagecopy($tmp, $image, 0, 0, $dest_x, $dest_y, $watermark_width, $watermark_height);
     imagecopy($tmp, $watermark, 0, 0, 0, 0, $watermark_width, $watermark_height);
@@ -160,6 +159,7 @@ class WatermarkGD extends GDBackend {
     $this->watermark = $watermark;
     $this->watermarkPosition = $position;
     $this->watermarkTransparency = $transparency;
+    return $this;
   }
   
 }
